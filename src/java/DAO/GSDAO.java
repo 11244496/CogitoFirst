@@ -504,7 +504,13 @@ public class GSDAO {
             myFactory = ConnectionFactory.getInstance();
             connection = myFactory.getConnection();
             // insert basic details
+            insertProjectDetails(p);
             // get project details + id
+            changeTestStatus(p.getMainTestimonial(), "Linked");
+            
+            for (Location l : p.getLocation()){
+                insertLocationDetails(l, p);
+            }
             // insert locations
             // get works from jsp check if it is existing if not, add to pworks table
             // insert pworks into project has pworks
@@ -525,7 +531,7 @@ public class GSDAO {
 
     public void insertProjectDetails(Project p) {
         try {
-            String insertProjectDetails = "insert into project (id, name, description, status, foldername, datesubmitted, category, employee_id) values (?,?,?,?,?,now(),?,?)";
+            String insertProjectDetails = "insert into project (id, name, description, status, foldername, datesubmitted, category, employee_id, testimonial_id) values (?,?,?,?,?,now(),?,?,?)";
             statement = connection.prepareStatement(insertProjectDetails);
             statement.setString(1, p.getId());
             statement.setString(2, p.getName());
@@ -534,6 +540,7 @@ public class GSDAO {
             statement.setString(5, p.getFoldername());
             statement.setString(6, p.getCategory());
             statement.setInt(7, p.getEmployee().getId());
+            statement.setInt(8, p.getMainTestimonial().getId());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {
@@ -541,13 +548,26 @@ public class GSDAO {
         }
     }
 
-    public void insertLocationDetails(Location l) {
+    public void changeTestStatus(Testimonial t, String status) {
+        try {
+            String insertProjectDetails = "update testimonial set status = ? where id = ?";
+            statement = connection.prepareStatement(insertProjectDetails);
+            statement.setString(1, status);
+            statement.setInt(2, t.getId());
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DAO.GSDAO.class.getName()).log(Level.SEVERE, "Error in inserting project details", ex);
+        }
+    }
+
+    public void insertLocationDetails(Location l, Project p) {
         try {
             String insertLocationDetails = "insert into location (longitude, latitude, project_id) values (?,?,?)";
             statement = connection.prepareStatement(insertLocationDetails);
             statement.setString(1, l.getLongs());
             statement.setString(2, l.getLats());
-            statement.setString(3, l.getProject().getId());
+            statement.setString(3, p.getId());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {

@@ -16,7 +16,6 @@ public class Project {
     private String id;
     private String name;
     private String description;
-    private String type;
     private String status;
     private String foldername;
     private Employee employee;
@@ -49,11 +48,10 @@ public class Project {
         this.id = id;
     }
 
-    public Project(String id, String name, String description, String type, String status, String foldername, Employee employee, String datesubmitted, float budget, String category, ArrayList<Location> location, ArrayList<Schedule> schedule, ArrayList<Files> files, ArrayList<PWorks> pWorks, Annotation annotation, ArrayList<PComments> pComments, ArrayList<Testimonial> referredTestimonials, ArrayList<Project> referredProjects, ArrayList<Feedback> feedback, ArrayList<Project_Inspection> inspection, Contractor contractor, Contractor_User contractorUser) {
+    public Project(String id, String name, String description, String status, String foldername, Employee employee, String datesubmitted, float budget, String category, ArrayList<Location> location, ArrayList<Schedule> schedule, ArrayList<Files> files, ArrayList<PWorks> pWorks, Annotation annotation, ArrayList<PComments> pComments, ArrayList<Testimonial> referredTestimonials, ArrayList<Project> referredProjects, ArrayList<Feedback> feedback, ArrayList<Project_Inspection> inspection, Contractor contractor, Contractor_User contractorUser) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.type = type;
         this.status = status;
         this.foldername = foldername;
         this.employee = employee;
@@ -78,7 +76,6 @@ public class Project {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.type = type;
         this.status = status;
         this.foldername = foldername;
         this.employee = employee;
@@ -140,20 +137,6 @@ public class Project {
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 
     /**

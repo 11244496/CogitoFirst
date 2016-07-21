@@ -112,7 +112,7 @@
                         <li class="dropdown">
                             <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <img alt="" src="img/avatar1_small.jpg">
-                                <span class="username">Hello <b><u></u></b>!</span>
+                                <span class="username">Hello <b><u><%=e.getFirstName()%></u></b>!</span>
                                 <b class="caret"></b>
                             </a>
                             <ul class="dropdown-menu extended logout">
@@ -234,7 +234,7 @@
                                         </ul>
                                     </div>
 
-                                    <form class="form-horizontal" id="proposalForm" method="post" action="GS_ViewProjectDetails.jsp">
+                                    <form class="form-horizontal" id="proposalForm" method="post" action="GS_SubmitProposal">
 
                                         <fieldset title="Testimonial" class="step" id="default-step-0">
                                             <legend></legend>
@@ -273,10 +273,8 @@
                                                                         <p> <button id="viewDetails" type="button" class="btn btn-info btn-sm viewbutton" value="<%=allTestimonials.get(x).getId()%>"> View details</button></p>
 
                                                                         <%if (allTestimonials.get(x).getMainproject().getId() == null) {%>
-                                                                        <p> <button type="button" class="btn btn-success btn-sm selectmainbtn" value="<%=allTestimonials.get(x).getId()%>">  Select as main</button> </p>
+                                                                        <p> <button type="button"  class="btn btn-success btn-sm selectmainbtn" value="<%=allTestimonials.get(x).getId()%>">  Select as main</button> </p>
                                                                         <%}%>
-
-                                                                        <p> <button type="button" class="btn btn-warning btn-sm selectreferencebtn" value="<%=allTestimonials.get(x).getId()%>"> Use as reference</button> </p>
                                                                     </td>
                                                                 </tr>
                                                                 <%}%>
@@ -286,6 +284,7 @@
                                                         </table>
                                                     </div>
                                                 </section>
+                                                <input type="hidden" name="maintestimonial" id="maintestimonial">
 
                                                 <div class="modal fade" id="viewdetails" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-lg">
@@ -459,13 +458,6 @@
                                                 </div>
                                             </div>
 
-                                            <div class="form-group">
-                                                <label class="col-sm-2 control-label">Target Implementation Date</label>
-                                                <div class="col-md-3 col-xs-11">
-                                                    <input class="form-control form-control-inline input-medium default-date-picker" name="targetimplementationdate" size="16" type="date" id="targetimplementationdate">
-                                                    <span class="help-block">Select date</span>
-                                                </div>
-                                            </div>
                                         </fieldset>
 
                                         <fieldset title="Program" class="step" id="default-step-3" >

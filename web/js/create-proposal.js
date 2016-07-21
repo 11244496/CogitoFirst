@@ -112,6 +112,20 @@ $('.selectmainbtn').click(function () {
             $('.selectmainbtn').hide();
         }
     });
+        $('#maintestimonial').val($(this).val());
+
+});
+$('#maincategory').change(function () {
+    $.ajax({
+        type: 'post',
+        url: 'AJAX_GS_GenerateProjectID',
+        dataType: 'json',
+        data: {category: $('#maincategory').val()},
+        cache: false,
+        success: function (data) {
+            $('#projectID').val(data);
+        }
+    });
 });
 
 //Remove the Selected Main Testimonial, detach and put back to testimonial list
