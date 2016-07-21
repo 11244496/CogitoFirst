@@ -231,7 +231,7 @@
                                         </ul>
                                     </div>
 
-                                    <form class="form-horizontal" id="proposalForm" method="post" action="GS_ViewProjectDetails.jsp">
+                                    <form class="form-horizontal" id="proposalForm" method="post" action="GS_SubmitProposal">
 
                                         <fieldset title="Testimonial" class="step" id="default-step-0">
                                             <legend></legend>
@@ -281,6 +281,7 @@
 
 
                                                         </table>
+                                                            <input type="hidden" id="mainTestimonial" name="mainTestimonial">
                                                     </div>
                                                 </section>
 
@@ -409,7 +410,7 @@
                                             <div class="form-group">
                                                 <label class="col-lg-2 control-label">Project ID</label>
                                                 <div class="col-lg-10">
-                                                    <input id="projectID" type="text" class="form-control" name="projectid" readonly>
+                                                    <input id="projectid" type="text" class="form-control" name="projectid" readonly>
                                                 </div>
                                             </div>
 

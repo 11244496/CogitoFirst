@@ -49,7 +49,6 @@ public class GS_CreateProposal extends HttpServlet {
             for (int x = 0; x < allTestimonials.size(); x++) {
                 allTestimonials.get(x).setFiles(c.getFilesWithStatus(allTestimonials.get(x).getId(),allTestimonials.get(x), "Approved"));
                 allTestimonials.get(x).setMainproject(gs.getMainProjectOnTestimonial(allTestimonials.get(x).getId()));
-                allTestimonials.get(x).setReferencedproject(gs.getReferenceProjectOnTestimonial(allTestimonials.get(x).getId()));
             }
 
             //Request set attributes testimonials

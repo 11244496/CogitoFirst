@@ -494,15 +494,29 @@ public class GSDAO {
             myFactory = ConnectionFactory.getInstance();
             connection = myFactory.getConnection();
             // insert basic details
-            // get project details + id
+            insertProjectDetails(p);
             // insert locations
-            // get works from jsp check if it is existing if not, add to pworks table
-            // insert pworks into project has pworks
-            // assign pwork in components
-            // insert components 
-            // set main testimonial
-            // insert referenced testimonial/s
-            // insert referenced project/s
+            for (Location l : p.getLocation()) {
+                insertLocationDetails(l);
+            }
+//            for (Phase ph : p.getPhase()) {
+//                insertPhases(ph, p);
+//            }
+//            for (Phase ph : p.getPhase()) {
+//                for (PWorks pw : ph.getpWorks()) {
+//                    insertWorksPerPhase(pw, ph);
+//                }
+//            }
+//            for (Phase ph : p.getPhase()) {
+//                for (PWorks pw : ph.getpWorks()) {
+//                    for (Component c : pw.getComponents()) {
+//                        insertComponents(c);
+//                    }
+//                }
+//            }
+//            for (Project ref : p.getReferredProjects()) {
+//                insertReferencedProjects(ref, p);
+//            }
 
             connection.close();
 
@@ -515,7 +529,7 @@ public class GSDAO {
 
     public void insertProjectDetails(Project p) {
         try {
-            String insertProjectDetails = "insert into project (id, name, description, status, foldername, datesubmitted, category, employee_id) values (?,?,?,?,?,now(),?,?)";
+            String insertProjectDetails = "insert into project (id, name, description, status, foldername, datesubmitted, category, employee_id, testimonial_id) values (?,?,?,?,?,now(),?,?,?)";
             statement = connection.prepareStatement(insertProjectDetails);
             statement.setString(1, p.getId());
             statement.setString(2, p.getName());
@@ -524,10 +538,24 @@ public class GSDAO {
             statement.setString(5, p.getFoldername());
             statement.setString(6, p.getCategory());
             statement.setInt(7, p.getEmployee().getId());
+            statement.setInt(8, p.getMainTestimonial().getId());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {
             Logger.getLogger(DAO.GSDAO.class.getName()).log(Level.SEVERE, "Error in inserting project details", ex);
+        }
+    }
+    
+    public void updateTestimonial(Testimonial t, String status) {
+        try {
+            String query = "update testimonial set status = ? where id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, status);
+            statement.setInt(2, t.getId());
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DAO.GSDAO.class.getName()).log(Level.SEVERE, "Error in changing testimonial status", ex);
         }
     }
 
@@ -545,14 +573,12 @@ public class GSDAO {
         }
     }
 
-    public void insertPhases(Project p) {
+    public void insertPhases(Phase ph, Project p) {
         try {
             String insertLocationDetails = "insert into phase (phasenumber, project_id) values (?,?)";
             statement = connection.prepareStatement(insertLocationDetails);
-            for (Phase ph : p.getPhase()) {
-                statement.setInt(1, ph.getPhaseNumber());
-                statement.setString(2, p.getId());
-            }
+            statement.setInt(1, ph.getPhaseNumber());
+            statement.setString(2, p.getId());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {
@@ -582,7 +608,6 @@ public class GSDAO {
     public void insertNewPWorks(PWorks pw) {
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
             String query = "insert into pworks (name) values (?)";
             statement = connection.prepareStatement(query);
             statement.setString(1, pw.getName());
@@ -596,7 +621,6 @@ public class GSDAO {
     public void insertComponents(Component c) {
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
             String query = "insert into components (name, unitprice, quantity, unit_id, phase_has_pworks_pworks_id, phase_has_pworks_phase_id) values (?,?,?,?,?,?)";
             statement = connection.prepareStatement(query);
             statement.setString(1, c.getName());
@@ -615,7 +639,6 @@ public class GSDAO {
     public void insertUnit(Unit u) {
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
             String query = "insert into unit (name) values (?)";
             statement = connection.prepareStatement(query);
             statement.setString(1, u.getUnit());
@@ -631,7 +654,6 @@ public class GSDAO {
         Unit u = null;
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
             String query = "select * from unit";
             statement = connection.prepareStatement(query);
             result = statement.executeQuery();
@@ -651,7 +673,6 @@ public class GSDAO {
     public void insertReferencedProjects(Project ref, Project main) {
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
             String query = "insert into project_has_reference (otherProject_ID, project_id) values (?,?)";
             statement = connection.prepareStatement(query);
             statement.setString(1, ref.getId());
@@ -663,14 +684,13 @@ public class GSDAO {
         }
     }
 
-    public void insertWorksPerProject(PWorks pw, Phase p) {
+    public void insertWorksPerPhase(PWorks pw, Phase p) {
         try {
             myFactory = ConnectionFactory.getInstance();
-            connection = myFactory.getConnection();
-            String query = "insert into phase_has_pworks (project_id, pworks_id) values (?,?)";
+            String query = "insert into phase_has_pworks (pworks_id, phase_id) values (?,?)";
             statement = connection.prepareStatement(query);
             statement.setInt(1, pw.getId());
-//            statement.setString(2, p.getId());
+            statement.setInt(2, p.getId());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException ex) {
@@ -720,7 +740,7 @@ public class GSDAO {
             myFactory = ConnectionFactory.getInstance();
             connection = myFactory.getConnection();
 
-            String detailsQuery = ("select id, name, type, description, datesubmitted, status from project");
+            String detailsQuery = ("select id, name, category, description, datesubmitted, status from project");
             statement = connection.prepareStatement(detailsQuery);
             result = statement.executeQuery();
             while (result.next()) {
@@ -728,7 +748,7 @@ public class GSDAO {
                 p.setId(result.getString("id"));
                 p.setName(result.getString("name"));
                 p.setDescription(result.getString("description"));
-                p.setType(result.getString("project.type"));
+                p.setType(result.getString("category"));
                 p.setStatus(result.getString("status"));
                 p.setDatesubmitted(result.getString("datesubmitted"));
                 pList.add(p);
@@ -983,5 +1003,130 @@ public class GSDAO {
             Logger.getLogger(DAO.GSDAO.class.getName()).log(Level.SEVERE, "Error in getting annotations", ex);
         }
         return a;
+    }
+
+    public Project getAllProjectDetails(String id) {
+        Project project = new Project();
+
+        //List of Entities Involved
+        Testimonial mainTestimonial = new Testimonial();
+        Employee e;
+        User u;
+        Contractor_User assignedContractor = new Contractor_User();
+
+        //List of ArrayList
+        ArrayList<Location> projectLocation = new ArrayList<Location>();
+        ArrayList<Schedule> projectSchedule = new ArrayList<Schedule>();
+        ArrayList<Files> projectFiles = new ArrayList<Files>();
+        ArrayList<PWorks> projectPWorks = new ArrayList<PWorks>();
+        ArrayList<Testimonial> projectReferencedTestimonial = new ArrayList<Testimonial>();
+        ArrayList<Project> projectReferencedProject = new ArrayList<Project>();
+
+        PreparedStatement locationS, scheduleS, filesS, pworksS, referencedtestimonialS, referencedprojectS;
+
+        try {
+            myFactory = ConnectionFactory.getInstance();
+            connection = myFactory.getConnection();
+
+            //Basic Details
+            String detailsQuery = ("select * from project join employee on employee.id = employee_id join users on users.id = users_id where project.id = ?");
+            statement = connection.prepareStatement(detailsQuery);
+            statement.setString(1, id);
+            result = statement.executeQuery();
+            while (result.next()) {
+                u = new User();
+                e = new Employee();
+                project.setId(result.getString("project.ID"));
+                project.setName(result.getString("name"));
+                project.setDescription(result.getString("description"));
+                project.setType(result.getString("category"));
+                project.setStatus(result.getString("status"));
+                project.setFoldername(result.getString("FolderName"));
+                project.setDatesubmitted(result.getString("datesubmitted"));
+                e.setId(result.getInt("employee.id"));
+                u.setUsername(result.getString("username"));
+                project.setEmployee(e);
+                project.setCategory(result.getString("Category"));
+                project.setBudget(result.getFloat("budget"));
+                Testimonial t = new Testimonial();
+                t.setId(result.getInt("Testimonial_ID"));
+                project.setMainTestimonial(t);
+            }
+
+            //Location
+            String locationQuery = ("select * from location where Project_ID = ?");
+            locationS = connection.prepareStatement(locationQuery);
+            locationS.setString(1, id);
+            result = locationS.executeQuery();
+            while (result.next()) {
+
+                Location loc = new Location();
+                loc.setId(result.getInt("ID"));
+                loc.setLats(result.getString("latitude"));
+                loc.setLongs(result.getString("Longitude"));
+                Project p = new Project();
+                p.setId(p.getId());
+                p.setName(p.getName());
+                p.setDescription(p.getDescription());
+                p.setType(p.getType());
+                p.setStatus(p.getStatus());
+                p.setFoldername(p.getFoldername());
+                p.setDatesubmitted(p.getDatesubmitted());
+                p.setCategory(p.getCategory());
+                p.setBudget(p.getBudget());
+                loc.setProject(p);
+
+                projectLocation.add(loc);
+            }
+            project.setLocation(projectLocation);
+
+            PreparedStatement phasesS;
+            String phasesQuery = "select * from phase where project_id = ?";
+            phasesS = connection.prepareStatement(phasesQuery);
+            phasesS.setString(1, id);
+            result = phasesS.executeQuery();
+            ArrayList<Phase> phList = new ArrayList<>();
+            while (result.next()) {
+                Phase ph = new Phase();
+                ph.setId(result.getInt("id"));
+                ph.setPhaseNumber(result.getInt("phasenumber"));
+                ph.setDescription(result.getString("description"));
+                phList.add(ph);
+            }
+            project.setPhase(phList);
+
+            ArrayList<PWorks> pwListPhase = new ArrayList<>();
+            PreparedStatement pWorksPerPhase;
+            String pWorksPerPhaseQ = "select * from phase where project_id = ?";
+            pWorksPerPhase = connection.prepareStatement(pWorksPerPhaseQ);
+            pWorksPerPhase.setString(1, id);
+            result = phasesS.executeQuery();
+            while (result.next()) {
+                Phase ph = new Phase();
+                ph.setId(result.getInt("id"));
+                ph.setPhaseNumber(result.getInt("phasenumber"));
+                ph.setDescription(result.getString("description"));
+                phList.add(ph);
+            }
+            project.setPhase(phList);
+
+            //Referenced Testimonial
+            String ReferencedP = ("select otherProject_ID from project_has_reference where Project_ID = ?");
+            referencedprojectS = connection.prepareStatement(ReferencedP);
+            referencedprojectS.setString(1, id);
+            result = referencedprojectS.executeQuery();
+            while (result.next()) {
+
+                Project p = new Project();
+                p.setId(result.getString("otherProject_ID"));
+                projectReferencedProject.add(p);
+            }
+            project.setReferredProjects(projectReferencedProject);
+
+            //End of Method
+        } catch (SQLException ex) {
+            Logger.getLogger(GSDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return project;
     }
 }

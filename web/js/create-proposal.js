@@ -34,6 +34,26 @@ $(function () {
     });
 });
 
+$('#maincategory').change(function(){
+        $.ajax({
+        type: 'post',
+        url: 'AJAX_GS_GenerateProjectID',
+        dataType: 'json',
+        data:
+                {
+                    category: $(this).val()
+                },
+        cache: false,
+        success: function (data) {
+            $('#projectid').val(data);
+        }
+    });
+    //Ajax Call here and change modal fields
+
+    $('#viewdetails').modal();
+    
+});
+
 $('.viewbutton').click(function () {
     $.ajax({
         type: 'post',
@@ -112,6 +132,8 @@ $('.selectmainbtn').click(function () {
             $('.selectmainbtn').hide();
         }
     });
+    $('#mainTestimonial').val($(this).val());
+
 });
 
 //Remove the Selected Main Testimonial, detach and put back to testimonial list

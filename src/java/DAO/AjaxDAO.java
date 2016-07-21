@@ -50,7 +50,7 @@ public class AjaxDAO {
         try {
             myFactory = ConnectionFactory.getInstance();
             connection = myFactory.getConnection();
-            String query = "select * id from project where category = ?";
+            String query = "select id from project where category = ?";
             statement = connection.prepareStatement(query);
             statement.setString(1, category);
             result = statement.executeQuery();
